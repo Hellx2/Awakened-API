@@ -14,7 +14,7 @@ export let range = (start, stop = undefined, step = undefined) => {
 
 export let merge = (...objs) => {
   let r = {};
-  for(let obj : objs)
+  for(let obj of objs)
     r = { ...r, ...obj };
   return r;
 }
