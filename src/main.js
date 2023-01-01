@@ -187,3 +187,19 @@ export let _window = class {
     this.#document.title = v;
   }
 }
+
+// UNFINISHED
+export let MDToHTML = md => {
+  let html = "<html>\n\t<head>\n\t\t\n\t</head>\n\t<body>\n\t\t";
+  let add = x => {
+    html += x + "\n\t\t";
+  }
+  for(let line of md.split(/(\r?\n)*/)) {
+    if(line.startsWith("### ")) 
+      add(`<h3>\n\t\t\t${line.split("### ").slice(1).join("### ").replace(/(\r?\n)*/, "\n\t\t\t")}\n\t\t</h3>`);
+    else if(line.startsWith("## "))
+      add(`<h2>\n\t\t\t${line.split("### ").slice(1).join("### ").replace(/(\r?\n)*/, "\n\t\t\t")}\n\t\t</h2>`);
+    else if(line.startsWith("# "))
+      add(`<h1>\n\t\t\t${line.split("### ").slice(1).join("### ").replace(/(\r?\n)*/, "\n\t\t\t")}\n\t\t</h1>`);
+  }
+}
