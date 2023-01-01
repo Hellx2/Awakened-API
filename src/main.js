@@ -19,8 +19,19 @@ export let merge = (...objs) => {
   return r;
 }
 
+export let arrUtil = {
+  allIndexesOf: (arr = [], num = NaN) => {
+    if(arr.length == 0) return [];
+    let r = [];
+    for(let i = 0; i < arr.length; i++ ) 
+      if(arr[i] == num || (isNaN(num) && isNaN(arr[i]))) 
+        r.push(i);
+    return r;
+  }
+}
+
 export let math = merge(Math, {
-  ln: this.log,
+  ln: x => this.log(x),
   rt: (x, rt) => x ** (1 / rt),
   sec: x => 1 / this.cos(x),
   csc: x => 1 / this.sin(x),
@@ -33,5 +44,19 @@ export let math = merge(Math, {
   coth: x => 1 / this.tanh(x),
   asech: x => this.acosh(1 / x),
   acsch: x => this.asinh(1 / x),
-  acoth: x => this.atanh(1 / x)
+  acoth: x => this.atanh(1 / x),
+  sum: (...nums) => {
+    let r = 0;
+    for(let num of nums) 
+      r += num;
+    return r;
+  },
+  avg: (...nums) => this.sum(...nums) / nums.length,
+  mean: (...nums) => this.avg(...nums),
+  median: (...nums) => this.avg(...nums),
+  mode: (...nums) => {
+    let times = [];
+    for(let n of nums) times[n]++;
+    return arrUtil.allIndexesOf(times, max(...times));
+  }
 })
