@@ -30,7 +30,7 @@ export let arrUtil = {
   }
 }
 
-export let math = merge(Math, {
+export const math = Math = merge(Math, {
   ln: x => this.log(x),
   rt: (x, rt) => x ** (1 / rt),
   sec: x => 1 / this.cos(x),
@@ -60,3 +60,66 @@ export let math = merge(Math, {
     return arrUtil.allIndexesOf(times, max(...times));
   }
 })
+
+export let parseBoolean = x => {
+  switch(typeof x) {
+    case "boolean": return x;
+    case "number":
+    case "bigint": return x != 0 && x != 0n;
+    case "string": return x.split("true").length > x.split("false").length;
+    case "function": return parseBoolean(x());
+    default: return x != undefined;
+  }
+}
+
+export let parseInt = x => {
+  switch (typeof x) {
+    case "number": return x;
+    case "string": return Number.parseFloat(x) || Number.parseInt(x);
+    case "boolean": return x ? 1 : 0;
+    case "function": return parseInt(x());
+    default: return Number(x);
+  }
+}
+
+export let toJSON = x => JSON.parse(x);
+
+export let parseString = x => {
+  if(typeof x === "object") return toJSON(x);
+  return `${x}`;
+}
+
+export let _window = new class {
+  #window = new Window();
+  
+  constructor(window) {
+    if(!(window instanceof Window)) throw new TypeError("Parameter 'window' must be of type 'Window'!");
+    this.#window = window;
+  }
+
+  fullscreen() {
+    if(!this.#window.document.fullscreenEnabled) throw new Error("Fullscreen is not enabled for this document!");
+    if(this.#window.document.fullscreenElement) this.#window.document.exitFullscreen();
+    else this.#window.document.body.requestFullscreen();
+  }
+
+  elFromID(id) {
+    return this.#window.document.getElementById(id);
+  }
+
+  elsFromClass(cls) {
+    return this.#window.document.getElementsByClassName(cls);
+  }
+
+  elsFromName(name) {
+    return this.#window.document.getElementsByName(name);
+  }
+
+  elsFromTag(name) {
+    return this.#window.document.getElementsByTagName(name);
+  }
+
+  elsFromTagNS(name) {
+    return this.#window.document.getElementsByTagNameNS(name);
+  }
+}()
