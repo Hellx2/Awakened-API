@@ -89,37 +89,61 @@ export let parseString = x => {
   return `${x}`;
 }
 
-export let _window = new class {
+export let _window = class {
   #window = new Window();
+
+  get #document() {
+    return this.#window.document;
+  }
+
+  set #document(v) {
+    if(!(v instanceof Document)) throw new TypeError("Paramater 'v' must be of type 'Document'!")
+    this.#document = v;
+  }
   
   constructor(window) {
     if(!(window instanceof Window)) throw new TypeError("Parameter 'window' must be of type 'Window'!");
     this.#window = window;
   }
 
+  static {
+    Object.defineProperties(this.prototype, {
+      charset: {
+        get: (this) => {
+          if(!(this instanceof _window)) throw new TypeError("Getter 'charset' must be run as type '_window'!");
+          return this.#document.characterSet;
+        },
+        set: (this, v) => {
+          throw new TypeError("Property 'charset' is readonly!");
+        },
+        writable: false
+      }
+    });
+  }
+
   fullscreen() {
-    if(!this.#window.document.fullscreenEnabled) throw new Error("Fullscreen is not enabled for this document!");
-    if(this.#window.document.fullscreenElement) this.#window.document.exitFullscreen();
-    else this.#window.document.body.requestFullscreen();
+    if(!this.#document.fullscreenEnabled) throw new Error("Fullscreen is not enabled for this document!");
+    if(this.#document.fullscreenElement) this.#document.exitFullscreen();
+    else this.#document.body.requestFullscreen();
   }
 
   elFromID(id) {
-    return this.#window.document.getElementById(id);
+    return this.#document.getElementById(id);
   }
 
   elsFromClass(cls) {
-    return this.#window.document.getElementsByClassName(cls);
+    return this.#document.getElementsByClassName(cls);
   }
 
   elsFromName(name) {
-    return this.#window.document.getElementsByName(name);
+    return this.#document.getElementsByName(name);
   }
 
   elsFromTag(name) {
-    return this.#window.document.getElementsByTagName(name);
+    return this.#document.getElementsByTagName(name);
   }
 
   elsFromTagNS(name) {
-    return this.#window.document.getElementsByTagNameNS(name);
+    return this.#document.getElementsByTagNameNS(name);
   }
-}()
+}
