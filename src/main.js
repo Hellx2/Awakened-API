@@ -27,6 +27,33 @@ export let arrUtil = {
       if(arr[i] == num || (isNaN(num) && isNaN(arr[i]))) 
         r.push(i);
     return r;
+  },
+  merge: (...arrs) => {
+    let r = [];
+    for(let arr of arrs) 
+      if(!(arr instanceof Array)) throw new TypeError(`Found parameter of type '${typeof arr}' where only accepting arrays!`);
+      else r = [...r, ...arr];
+    return r;
+  },
+  intersect: (...arrs) => {
+    let r = [];
+    for(let arr of arrs)
+      for(let i = 0; i < r.length; i++)
+        if(!arr.contains(r[i])) r.splice(i, 1);
+    return r;
+  },
+  union: (...arrs) => {
+    let r = [];
+    for(let arr of arrs)
+      if(!(arr instanceof Array)) throw new TypeError(`Found parameter of type '${typeof arr}' where only accepting arrays!`);
+      else for(let x of arr) 
+        if(!r.contains(x)) r.push(x);
+    return r;
+  },
+  difference: (arr1, arr2) => {
+    for(let i = 0; i < arr1.length; i++) 
+      if(arr2.contains(arr1[i])) arr1.splice(i--, 1)
+    return arr1;
   }
 }
 
@@ -114,11 +141,15 @@ export let _window = class {
           return this.#document.characterSet;
         },
         set: (this, v) => {
-          throw new TypeError("Property 'charset' is readonly!");
+          throw new TypeError(`Property 'charset' is readonly, cannot set it to the value ${v}!`);
         },
         writable: false
       }
     });
+  }
+
+  get length() {
+    return this.#window.length;
   }
 
   fullscreen() {
@@ -145,5 +176,14 @@ export let _window = class {
 
   elsFromTagNS(name) {
     return this.#document.getElementsByTagNameNS(name);
+  }
+
+  get title() {
+    return this.#document.title;
+  }
+
+  set title(v) {
+    if(typeof v !== "string") throw new TypeError(`Type '${typeof v}' on parameter 'v' must be of type 'string'!`);
+    this.#document.title = v;
   }
 }
